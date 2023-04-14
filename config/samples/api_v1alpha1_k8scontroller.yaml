@@ -1,0 +1,17 @@
+apiVersion: api.lazyboson.ai/v1alpha1
+kind: K8scontroller
+metadata:
+  labels:
+    app.kubernetes.io/name: k8scontroller
+    app.kubernetes.io/instance: k8scontroller-sample
+    app.kubernetes.io/part-of: k8s-controller
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: k8s-controller
+  name: k8scontroller-sample
+spec:
+  start: 1
+  end: 17
+  replicas: 5
+  deployments:
+    - name: nginx
+      namespace: default
