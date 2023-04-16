@@ -19,10 +19,12 @@ package controllers
 import (
 	"context"
 	"fmt"
-	v1 "k8s.io/api/apps/v1"
-	"k8s.io/apimachinery/pkg/types"
 	"time"
 
+	v1 "k8s.io/api/apps/v1"
+	"k8s.io/apimachinery/pkg/types"
+
+	"github.com/go-logr/logr"
 	apiv1alpha1 "github.com/lazyboson/k8s-controller/api/v1alpha1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -33,6 +35,7 @@ import (
 type K8scontrollerReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
+	Log    logr.Logger
 }
 
 //+kubebuilder:rbac:groups=api.lazyboson.ai,resources=k8scontrollers,verbs=get;list;watch;create;update;patch;delete
@@ -49,15 +52,17 @@ type K8scontrollerReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.14.1/pkg/reconcile
 func (r *K8scontrollerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	log := r.Log.WithValues("k8scontroller", req.NamespacedName)
 	op := &apiv1alpha1.K8scontroller{}
 	if err := r.Get(ctx, req.NamespacedName, op); err != nil {
 		return ctrl.Result{}, err
 	}
 
 	currentHour := time.Now().UTC().Hour()
-	fmt.Println("current UTC time", currentHour)
+
+	log.Info(fmt.Sprintf("received currentHour: %d", currentHour))
 	if currentHour >= op.Spec.Start && currentHour <= op.Spec.End {
-		fmt.Println("entered in scaling")
+		log.Info("entered in scaling")
 		for _, deployment := range op.Spec.Deployments {
 			deploy := &v1.Deployment{}
 			err := r.Get(ctx, types.NamespacedName{
@@ -70,7 +75,7 @@ func (r *K8scontrollerReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 
 			if deploy.Spec.Replicas != &op.Spec.Replicas {
 				deploy.Spec.Replicas = &op.Spec.Replicas
-				fmt.Printf("replicas %d", op.Spec.Replicas)
+				log.Info(fmt.Sprintf("replicas %d", op.Spec.Replicas))
 				err := r.Update(ctx, deploy)
 				if err != nil {
 					return ctrl.Result{}, err

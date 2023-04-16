@@ -10,8 +10,8 @@ metadata:
   name: k8scontroller-sample
 spec:
   start: 1
-  end: 17
-  replicas: 5
+  end: 24
+  replicas: 1
   deployments:
     - name: nginx
       namespace: default

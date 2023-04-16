@@ -88,10 +88,12 @@ func main() {
 		setupLog.Error(err, "unable to start manager")
 		os.Exit(1)
 	}
+	log := ctrl.Log.WithName("controller").WithName("k8scontroller")
 
 	if err = (&controllers.K8scontrollerReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
+		Log:    log,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "K8scontroller")
 		os.Exit(1)
