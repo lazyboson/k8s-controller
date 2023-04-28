@@ -1,9 +1,7 @@
 # k8s-controller
-// TODO(user): Add simple overview of use/purpose
-
+This Controller aims to test PodDeletionCost feature of K8s.
 ## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
-
+This controller creates deployment with name `webserver` having `replicas=5` with image of `nginx`. Then It fetches all pods of this deployment and deletes then annotates them with `pod-deletion-cost` annotation. Later it scale down to `replica=2` and it can be verified the deleted pods are the ones with lowest `pod-deletion-cost` annotation. 
 ## Getting Started
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
 **Note:** Your controller will automatically use the current context in your kubeconfig file (i.e. whatever cluster `kubectl cluster-info` shows).
