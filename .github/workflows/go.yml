@@ -16,8 +16,8 @@ jobs:
     steps:
     - name: kafka setup
       run: |
-        curl -O https://downloads.apache.org/kafka/3.3.1/kafka_2.13-3.3.1.tgz 
-        tar -xzf kafka_2.13-3.3.1.tgz
+        curl -O https://archive.apache.org/dist/kafka/2.8.2/kafka-2.8.2-src.tgz
+        tar -xzf kafka-2.8.2-src.tgz
     - name: Start Zookeeper
       run: ./kafka_2.13-3.3.1/bin/zookeeper-server-start.sh ./kafka_2.13-3.3.1/config/zookeeper.properties &
     - name: Start Kafka Server
